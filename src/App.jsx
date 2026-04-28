@@ -203,4 +203,53 @@ const App = () => {
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex items-center gap-2">
                         <div className="p-2 rounded-xl" style={{ backgroundColor: themes[log.actionId].light, color: themes[log.actionId].text }}>{React.createElement(themes[log.actionId].icon, { size: 16 })}</div>
-                        <span className="text-[11px] font-
+                        <span className="text-[11px] font-black text-gray-600 uppercase tracking-widest">{t[log.actionId].title}</span>
+                      </div>
+                      <span className="text-[10px] font-bold text-gray-300">{log.date}</span>
+                    </div>
+                    <p className="text-[14px] text-gray-700 font-bold leading-relaxed">{log.text}</p>
+                  </div>
+                )) : (
+                  <div className="text-center py-24 text-gray-400 font-black tracking-widest text-sm uppercase">ยังไม่มีบันทึก...</div>
+                )}
+               </div>
+            </div>
+          )}
+
+          {currentView === 'profile' && (
+            <div className="py-4 text-center">
+               <h2 className="text-2xl font-black text-gray-800 mb-8">{t.profileTitle}</h2>
+               <div className="bg-white rounded-[40px] p-10 shadow-xl border-2 border-gray-50 flex flex-col items-center">
+                <div className="w-32 h-32 bg-red-50 rounded-full flex items-center justify-center text-6xl mb-6 border-8 border-white shadow-2xl">
+                   {evolutionStage === 'koi' ? '🐠' : evolutionStage === 'pixiu' ? '🦁' : '🐉'}
+                </div>
+                <h3 className="text-2xl font-black text-gray-800 mb-1">{profile.name}</h3>
+                <div className="w-full text-left bg-gray-50 p-6 rounded-[30px] mt-6">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">{t.editProfile}</label>
+                  <input type="text" className="w-full p-4 mt-2 rounded-2xl bg-white border-2 border-gray-100 focus:border-red-400 focus:outline-none font-black text-gray-700 text-center" value={tempName} onChange={(e) => setTempName(e.target.value)} maxLength={20} />
+                  <button onClick={() => { setProfile({ ...profile, name: tempName }); setCurrentView('home'); }} className="w-full py-5 mt-5 bg-gradient-to-r from-[#A72517] to-[#80180F] text-white rounded-[25px] font-black shadow-xl">
+                    <CheckCircle size={20} className="inline mr-2" /> {t.saveProfile}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="h-[90px] bg-white border-t-2 border-gray-50 flex justify-around items-center px-6 z-10">
+          <button onClick={() => setCurrentView('history')} className={`flex flex-col items-center gap-1 ${currentView === 'history' ? 'text-[#A72517]' : 'text-gray-300'}`}>
+            <FileText size={24} /><span className="text-[10px] font-black uppercase tracking-tighter">Journal</span>
+          </button>
+          <button onClick={() => setCurrentView('home')} className="w-[70px] h-[70px] rounded-[25px] flex items-center justify-center shadow-2xl -mt-12 border-[6px] border-[#FDFCF9]" style={{ background: 'linear-gradient(180deg, #A72517 0%, #80180F 100%)' }}>
+            <Home className="text-white" size={28} />
+          </button>
+          <button onClick={() => { setCurrentView('profile'); setTempName(profile.name); }} className={`flex flex-col items-center gap-1 ${currentView === 'profile' ? 'text-[#A72517]' : 'text-gray-300'}`}>
+            <User size={24} /><span className="text-[10px] font-black uppercase tracking-tighter">Profile</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default App;
