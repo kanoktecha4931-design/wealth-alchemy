@@ -90,14 +90,12 @@ const App = () => {
     setTimeout(() => setIsFlashing(false), 1000);
   };
 
-  // คำนวณ % แถบพลังงาน (Max 200 แต้มเพื่อเป็นมังกรเต็มตัว)
   const energyPercent = Math.min((points / 200) * 100, 100);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-2 font-sans">
-      <div className="w-full max-w-[375px] h-[780px] bg-[#FDFCF9] rounded-[45px] shadow-2xl overflow-hidden border-[8px] border-white relative flex flex-col transition-all">
+      <div className="w-full max-w-[375px] h-[780px] bg-[#FDFCF9] rounded-[45px] shadow-2xl overflow-hidden border-[8px] border-white relative flex flex-col">
         
-        {/* Energy Charge Flash Effect */}
         {isFlashing && (
           <div className="absolute inset-0 bg-yellow-400/30 z-[100] flex items-center justify-center animate-pulse backdrop-blur-[2px]">
              <div className="flex flex-col items-center animate-bounce">
@@ -107,7 +105,6 @@ const App = () => {
           </div>
         )}
 
-        {/* Modal สำหรับบันทึก */}
         {isModalOpen && activeActionId && (
           <div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-md flex items-end justify-center p-4">
             <div className="bg-white w-full rounded-[35px] p-7 shadow-2xl mb-4 border-t-8" style={{ borderColor: themes[activeActionId].bg }}>
@@ -128,7 +125,6 @@ const App = () => {
           </div>
         )}
 
-        {/* Header */}
         <div className="p-7 pb-4 flex justify-between items-start bg-white/40">
           <div className="flex items-center gap-3">
              <div className="w-12 h-12 rounded-2xl bg-[#A72517] flex items-center justify-center text-white shadow-lg shadow-red-200">
@@ -141,35 +137,31 @@ const App = () => {
                 </p>
              </div>
           </div>
-          <button onClick={() => setLang(lang === 'TH' ? 'EN' : 'TH')} className="bg-white shadow-md px-4 py-1.5 rounded-full text-xs font-black text-gray-500 border border-gray-50 tracking-tighter tracking-widest uppercase"> {lang} </button>
+          <button onClick={() => setLang(lang === 'TH' ? 'EN' : 'TH')} className="bg-white shadow-md px-4 py-1.5 rounded-full text-xs font-black text-gray-500 border border-gray-50 tracking-widest uppercase"> {lang} </button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 pb-24">
           {currentView === 'home' && (
             <div className="flex flex-col">
-              {/* ส่วนแสดง Mascot และ แต้ม */}
               <div className="relative flex flex-col items-center justify-center py-6 mt-2">
                 <div className={`absolute -z-10 rounded-full blur-[60px] animate-pulse transition-all duration-1000 ${evolutionStage === 'dragon' ? 'w-72 h-72 bg-yellow-300 opacity-60' : 'w-56 h-56 bg-orange-200 opacity-40'}`} />
-                
                 <div className="text-[6.5rem] mb-4 drop-shadow-2xl animate-bounce" style={{ animationDuration: '3s' }}>
                   {evolutionStage === 'koi' ? '🐠' : evolutionStage === 'pixiu' ? '🦁' : '🐉'}
                 </div>
 
-                {/* Energy Bar (ชาร์จพลังงาน) */}
                 <div className="w-full max-w-[240px] mb-6">
                    <div className="flex justify-between items-end mb-1.5 px-1">
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t.energyLabel}</span>
                       <span className="text-[12px] font-black text-[#D4AF37]">{Math.floor(energyPercent)}%</span>
                    </div>
-                   <div className="h-4 w-full bg-gray-100 rounded-full p-1 border border-gray-50 shadow-inner">
-                      <div className={`h-full rounded-full bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 shadow-[0_0_15px_rgba(251,191,36,0.5)] transition-all duration-1000 ${isFlashing ? 'brightness-150 scale-y-110' : ''}`} style={{ width: `${energyPercent}%` }} />
+                   <div className="h-4 w-full bg-gray-100 rounded-full p-1 border border-gray-50 shadow-inner overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 shadow-[0_0_15px_rgba(251,191,36,0.5)] transition-all duration-1000" style={{ width: `${energyPercent}%` }} />
                    </div>
                 </div>
 
                 <div className="bg-white/95 backdrop-blur px-10 py-3 rounded-[35px] shadow-xl border-2 border-yellow-100 text-center relative overflow-hidden group">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-black mb-1">{t.pointsLabel}</p>
                   <div className="text-5xl font-black text-[#D4AF37] drop-shadow-sm">{points.toLocaleString()}</div>
-                  <div className="absolute top-0 right-0 p-2 text-[#A72517] opacity-10 group-hover:opacity-100 transition-opacity"><Star size={16} /></div>
                 </div>
                 
                 <div className="mt-4 bg-gradient-to-r from-[#A72517] to-[#80180F] text-white px-7 py-2 rounded-full text-xs font-black shadow-xl tracking-wide uppercase">
@@ -177,13 +169,13 @@ const App = () => {
                 </div>
               </div>
 
-              {/* ปุ่ม Action ต่างๆ */}
               <div className="grid grid-cols-1 gap-4 mt-4">
                 {Object.keys(themes).map((id) => (
-                  <button key={id} onClick={() => { setActiveActionId(id); setInputText(''); setIsModalOpen(true); }} className="p-4 rounded-[30px] border-b-[5px] active:translate-y-1 active:border-b-0 transition-all flex items-center bg-white shadow-sm hover:shadow-md" style={{ borderColor: themes[id].border, backgroundColor: themes[id].light }}>
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-md mr-4 bg-white shrink-0" style={{ color: themes[id].text }}>
-                      {React.createElement(themes[id].icon, { size: 30, className: 'fill-current opacity-20' })}
-                      <div className="absolute">{React.createElement(themes[id].icon, { size: 28 })}</div>
+                  <button key={id} onClick={() => { setActiveActionId(id); setInputText(''); setIsModalOpen(true); }} className="p-4 rounded-[30px] border-b-[5px] active:translate-y-1 active:border-b-0 transition-all flex items-center bg-white shadow-sm hover:shadow-md overflow-hidden" style={{ borderColor: themes[id].border, backgroundColor: themes[id].light }}>
+                    {/* แก้ไขส่วนไอคอนตรงนี้ให้ไม่หลุดตำแหน่ง */}
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-md mr-4 bg-white shrink-0 relative overflow-hidden" style={{ color: themes[id].text }}>
+                      {React.createElement(themes[id].icon, { size: 30, className: 'opacity-10 absolute' })}
+                      {React.createElement(themes[id].icon, { size: 28, className: 'relative z-10' })}
                     </div>
                     <div className="text-left flex-1">
                       <h3 className="text-[15px] font-black text-gray-800 leading-none mb-1">{t[id].title}</h3>
@@ -209,7 +201,6 @@ const App = () => {
                <div className="flex flex-col gap-4">
                 {logs.length > 0 ? logs.map((log) => (
                   <div key={log.id} className="p-5 rounded-[30px] bg-white border-2 shadow-sm relative overflow-hidden group" style={{ borderColor: themes[log.actionId].border }}>
-                    <div className="absolute top-0 right-0 w-16 h-16 -mr-8 -mt-8 rounded-full opacity-5 group-hover:scale-150 transition-transform" style={{ backgroundColor: themes[log.actionId].bg }} />
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex items-center gap-2">
                         <div className="p-2 rounded-xl" style={{ backgroundColor: themes[log.actionId].light, color: themes[log.actionId].text }}>{React.createElement(themes[log.actionId].icon, { size: 16 })}</div>
@@ -238,15 +229,13 @@ const App = () => {
                   <h2 className="text-2xl font-black text-gray-800">{t.profileTitle}</h2>
                </div>
                <div className="bg-white rounded-[40px] p-10 shadow-xl border-2 border-gray-50 flex flex-col items-center text-center">
-                <div className="w-32 h-32 bg-gradient-to-b from-red-50 to-white rounded-full flex items-center justify-center text-6xl mb-6 border-8 border-white shadow-2xl relative">
-                   <div className="absolute inset-0 rounded-full border-4 border-yellow-400/30 animate-spin-slow" />
+                <div className="w-32 h-32 bg-gradient-to-b from-red-50 to-white rounded-full flex items-center justify-center text-6xl mb-6 border-8 border-white shadow-2xl relative overflow-hidden">
                    {evolutionStage === 'koi' ? '🐠' : evolutionStage === 'pixiu' ? '🦁' : '🐉'}
                 </div>
                 <h3 className="text-2xl font-black text-gray-800 mb-1">{profile.name}</h3>
                 <p className="text-[#A72517] font-black uppercase tracking-[0.3em] text-xs mb-8">
                    {points <= 50 ? t.level[0] : points <= 150 ? t.level[1] : t.level[2]}
                 </p>
-                
                 <div className="w-full text-left bg-gray-50 p-6 rounded-[30px]">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">{t.editProfile}</label>
                   <input type="text" className="w-full p-4 mt-2 rounded-2xl bg-white border-2 border-gray-100 focus:border-red-400 focus:outline-none font-black text-gray-700 text-center" value={tempName} onChange={(e) => setTempName(e.target.value)} maxLength={20} />
@@ -259,33 +248,20 @@ const App = () => {
           )}
         </div>
 
-        {/* Footer Navigation */}
         <div className="h-[90px] bg-white border-t-2 border-gray-50 flex justify-around items-center px-6 z-10">
           <button onClick={() => setCurrentView('history')} className={`flex flex-col items-center gap-1 transition-all ${currentView === 'history' ? 'text-[#A72517] scale-110' : 'text-gray-300'}`}>
-            <FileText size={24} className={currentView === 'history' ? 'fill-current opacity-10' : ''} />
+            <FileText size={24} />
             <span className="text-[10px] font-black uppercase tracking-tighter">Journal</span>
           </button>
-          
-          <button onClick={() => setCurrentView('home')} className="w-[70px] h-[70px] rounded-[25px] flex items-center justify-center shadow-2xl -mt-12 border-[6px] border-[#FDFCF9] active:scale-90 transition-all group" style={{ background: 'linear-gradient(180deg, #A72517 0%, #80180F 100%)' }}>
-            <Home className="text-white group-hover:scale-110 transition-transform" size={28} />
+          <button onClick={() => setCurrentView('home')} className="w-[70px] h-[70px] rounded-[25px] flex items-center justify-center shadow-2xl -mt-12 border-[6px] border-[#FDFCF9] active:scale-90 transition-all" style={{ background: 'linear-gradient(180deg, #A72517 0%, #80180F 100%)' }}>
+            <Home className="text-white" size={28} />
           </button>
-          
           <button onClick={() => { setCurrentView('profile'); setTempName(profile.name); }} className={`flex flex-col items-center gap-1 transition-all ${currentView === 'profile' ? 'text-[#A72517] scale-110' : 'text-gray-300'}`}>
-            <User size={24} className={currentView === 'profile' ? 'fill-current opacity-10' : ''} />
+            <User size={24} />
             <span className="text-[10px] font-black uppercase tracking-tighter">Profile</span>
           </button>
         </div>
       </div>
-
-      <style jsx global>{`
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        .animate-spin-slow {
-          animation: spin-slow 8s linear infinite;
-        }
-      `}</style>
     </div>
   );
 };
