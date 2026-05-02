@@ -60,13 +60,11 @@ const App = () => {
     manifest: { pts: 20, icon: Zap, bg: '#A855F7', light: '#FAF5FF', text: '#7E22CE', border: '#E9D5FF' }
   };
 
-  // --- ระบบคำนวณวิวัฒนาการสัตว์มงคล 8 ชนิด ---
   const getEvolutionInfo = (currentPoints) => {
     const cycleSize = 1000;
     const cycle = Math.floor(currentPoints / cycleSize);
     const progressInCycle = currentPoints % cycleSize;
     
-    // รายชื่อสัตว์มงคลตามโจทย์ที่คุณให้มา
     const animals = [
       { emoji: '🐠', name: 'ปลาคาร์ฟ' },
       { emoji: '🦁', name: 'ปี่เซียะ' },
@@ -78,7 +76,7 @@ const App = () => {
       { emoji: '🦇', name: 'ค้างคาว' }
     ];
 
-    const currentData = animals[cycle % animals.length];
+    const currentData = animals[cycle % animals.length] || animals[0];
 
     let stageText = "";
     let scale = "scale-75";
@@ -125,10 +123,12 @@ const App = () => {
     setTimeout(() => setIsFlashing(false), 1200);
   };
 
+  // --- แก้ไขฟังก์ชันลบ: ให้ลบเสร็จแล้วเด้งกลับหน้า Home ---
   const handleDeleteLog = (id, logPoints) => {
     if (window.confirm(t.deleteConfirm)) {
       setLogs(logs.filter(log => log.id !== id));
       setPoints(prev => Math.max(0, prev - logPoints));
+      setCurrentView('home'); // <--- เพิ่มบรรทัดนี้เพื่อให้เด้งกลับหน้าแรกค่ะ
     }
   };
 
@@ -140,19 +140,17 @@ const App = () => {
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-2 font-sans">
       <div className="w-full max-w-[375px] h-[780px] bg-[#FDFCF9] rounded-[45px] shadow-2xl overflow-hidden border-[8px] border-white relative flex flex-col">
         
-        {/* Golden Gem Flash */}
         {isFlashing && (
           <div className="absolute inset-0 bg-black/40 z-[100] flex items-center justify-center backdrop-blur-sm">
              <div className="flex flex-col items-center animate-bounce">
                 <div className="w-24 h-24 bg-gradient-to-tr from-[#D4AF37] to-[#FFF7AD] rotate-45 shadow-[0_0_40px_#D4AF37] mb-6 flex items-center justify-center">
                     <Gem className="text-black rotate-[-45deg] w-12 h-12" />
                 </div>
-                <span className="text-white font-black text-2xl tracking-tighter">GOLDEN ENERGY CHARGED!</span>
+                <span className="text-white font-black text-2xl tracking-tighter uppercase">Energy Charged!</span>
              </div>
           </div>
         )}
 
-        {/* Modal บันทึก */}
         {isModalOpen && activeActionId && (
           <div className="absolute inset-0 z-50 bg-black/50 backdrop-blur-md flex items-end justify-center p-4">
             <div className="bg-white w-full rounded-[35px] p-7 shadow-2xl mb-4 border-t-8" style={{ borderColor: themes[activeActionId].bg }}>
@@ -165,8 +163,8 @@ const App = () => {
                 </div>
                 <button onClick={() => setIsModalOpen(false)} className="bg-gray-100 p-2 rounded-full"><X size={20} /></button>
               </div>
-              <textarea autoFocus className="w-full p-5 rounded-[25px] border-2 bg-gray-50 focus:outline-none min-h-[140px] text-base mb-5" style={{ borderColor: themes[activeActionId].border }} placeholder={lang === 'TH' ? themes[activeActionId].desc : 'Enter your record...'} value={inputText} onChange={(e) => setInputText(e.target.value)} />
-              <button onClick={handleSaveAction} disabled={!inputText.trim()} className="w-full py-5 rounded-[25px] flex items-center justify-center gap-3 text-white text-lg font-black bg-gradient-to-r from-[#D4AF37] via-[#FFF7AD] to-[#D4AF37] shadow-xl">
+              <textarea autoFocus className="w-full p-5 rounded-[25px] border-2 bg-gray-50 focus:outline-none min-h-[140px] text-base mb-5" style={{ borderColor: themes[activeActionId].border }} placeholder={lang === 'TH' ? themes[activeActionId].desc : 'Enter detail...'} value={inputText} onChange={(e) => setInputText(e.target.value)} />
+              <button onClick={handleSaveAction} disabled={!inputText.trim()} className="w-full py-5 rounded-[25px] flex items-center justify-center gap-3 text-white text-lg font-black bg-gradient-to-r from-[#D4AF37] via-[#FFF7AD] to-[#D4AF37] shadow-xl transition-all active:scale-95">
                 <Zap size={22} fill="currentColor" /> {t.saveBtn}
               </button>
             </div>
@@ -186,7 +184,7 @@ const App = () => {
                 </p>
              </div>
           </div>
-          <button onClick={() => setLang(lang === 'TH' ? 'EN' : 'TH')} className="bg-white shadow-md px-4 py-1.5 rounded-full text-xs font-black border border-gray-50"> {lang} </button>
+          <button onClick={() => setLang(lang === 'TH' ? 'EN' : 'TH')} className="bg-white shadow-md px-4 py-1.5 rounded-full text-xs font-black border border-gray-50 uppercase tracking-tighter"> {lang} </button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 pb-24">
@@ -195,26 +193,21 @@ const App = () => {
               <div className="relative flex flex-col items-center justify-center py-6 mt-2">
                 <div className="absolute -z-10 w-64 h-64 bg-yellow-200 blur-[80px] rounded-full opacity-30 animate-pulse" />
                 
-                {/* Evolution Mascot Display */}
-                <div 
-                  className={`text-[6.8rem] mb-4 transition-all duration-1000 ease-in-out ${evolution.scale}`}
-                  style={{ filter: evolution.filter }}
-                >
+                <div className={`text-[6.8rem] mb-4 transition-all duration-1000 ease-in-out ${evolution.scale}`} style={{ filter: evolution.filter }}>
                   {evolution.mascot}
                 </div>
                 <div className="mb-4 bg-gradient-to-r from-orange-50 to-yellow-50 px-5 py-1.5 rounded-full text-[11px] font-black text-[#A72517] border border-orange-100 shadow-sm uppercase tracking-tighter">
                   {evolution.stageText}
                 </div>
 
-                {/* Energy Bar 5M Goal */}
+                {/* Energy Bar 5M */}
                 <div className="w-full max-w-[260px] mb-6">
                    <div className="flex justify-between items-end mb-1.5 px-1">
                       <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{t.energyLabel}</span>
                       <span className="text-[11px] font-black text-[#D4AF37]">{energyPercent.toFixed(4)}%</span>
                    </div>
-                   <div className="h-5 w-full bg-[#1A1A1A] rounded-full p-1 border border-gray-100 shadow-inner overflow-hidden">
+                   <div className="h-5 w-full bg-[#1A1A1A] rounded-full p-1 border border-gray-100 shadow-inner overflow-hidden relative">
                       <div className="h-full rounded-full bg-gradient-to-r from-[#333] via-[#D4AF37] to-[#FFF7AD] shadow-[0_0_15px_#D4AF37] transition-all duration-1000" style={{ width: `${Math.max(1, (points/50000)*100)}%` }} />
-                      {/* หมายเหตุ: ปรับความยาวแถบให้เห็นการเคลื่อนไหวในช่วงแรก 50,000 แต้มก่อนเต็ม 5M */}
                    </div>
                 </div>
 
@@ -224,7 +217,6 @@ const App = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="grid grid-cols-1 gap-3 mt-4">
                 {Object.keys(themes).map((id) => (
                   <button key={id} onClick={() => { setActiveActionId(id); setInputText(''); setIsModalOpen(true); }} className="p-4 rounded-[30px] border-b-[5px] active:translate-y-1 active:border-b-0 transition-all flex items-center bg-white shadow-sm" style={{ borderColor: themes[id].border, backgroundColor: themes[id].light }}>
@@ -247,10 +239,7 @@ const App = () => {
                <div className="flex flex-col gap-3">
                 {logs.length > 0 ? logs.map((log) => (
                   <div key={log.id} className="p-5 rounded-[30px] bg-white border-2 shadow-sm relative group" style={{ borderColor: themes[log.actionId].border }}>
-                    <button 
-                      onClick={() => handleDeleteLog(log.id, log.points)}
-                      className="absolute top-4 right-4 p-2 text-gray-300 hover:text-red-500 transition-colors"
-                    >
+                    <button onClick={() => handleDeleteLog(log.id, log.points)} className="absolute top-4 right-4 p-2 text-gray-300 hover:text-red-500 transition-colors">
                       <Trash2 size={18} />
                     </button>
                     <div className="flex justify-between items-start mb-3">
@@ -262,7 +251,7 @@ const App = () => {
                     <p className="text-[14px] text-gray-700 font-bold leading-relaxed pr-8">{log.text}</p>
                     <p className="text-[9px] text-gray-400 mt-2 font-bold uppercase">{log.date}</p>
                   </div>
-                )) : <div className="text-center py-24 text-gray-300 font-black tracking-widest text-sm uppercase">ยังไม่มีประวัติชาร์จพลังงาน</div>}
+                )) : <div className="text-center py-24 text-gray-300 font-black tracking-widest text-sm uppercase">Journal is Empty</div>}
                </div>
             </div>
           )}
@@ -277,7 +266,7 @@ const App = () => {
                 <div className="w-full text-left bg-gray-50 p-6 rounded-[30px]">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">ชื่อของคุณ</label>
                   <input type="text" className="w-full p-4 mt-2 rounded-2xl bg-white border-2 border-gray-100 focus:outline-none font-black text-center" value={tempName} onChange={(e) => setTempName(e.target.value)} maxLength={20} />
-                  <button onClick={() => { setProfile({ ...profile, name: tempName }); setCurrentView('home'); }} className="w-full py-5 mt-5 bg-gradient-to-r from-[#A72517] to-[#80180F] text-white rounded-[25px] font-black shadow-xl">
+                  <button onClick={() => { setProfile({ ...profile, name: tempName }); setCurrentView('home'); }} className="w-full py-5 mt-5 bg-gradient-to-r from-[#A72517] to-[#80180F] text-white rounded-[25px] font-black shadow-xl transition-all active:scale-95">
                     <CheckCircle size={20} className="inline mr-2" /> {t.saveProfile}
                   </button>
                 </div>
@@ -286,12 +275,12 @@ const App = () => {
           )}
         </div>
 
-        {/* Footer Navigation */}
+        {/* Footer Nav */}
         <div className="h-[90px] bg-white border-t-2 border-gray-50 flex justify-around items-center px-6 z-10">
           <button onClick={() => setCurrentView('history')} className={`flex flex-col items-center gap-1 ${currentView === 'history' ? 'text-[#A72517]' : 'text-gray-300'}`}>
             <FileText size={24} /><span className="text-[10px] font-black uppercase">Journal</span>
           </button>
-          <button onClick={() => setCurrentView('home')} className="w-[70px] h-[70px] rounded-[25px] flex items-center justify-center shadow-2xl -mt-12 border-[6px] border-[#FDFCF9]" style={{ background: 'linear-gradient(180deg, #A72517 0%, #80180F 100%)' }}>
+          <button onClick={() => setCurrentView('home')} className="w-[70px] h-[70px] rounded-[25px] flex items-center justify-center shadow-2xl -mt-12 border-[6px] border-[#FDFCF9] transition-all active:scale-90" style={{ background: 'linear-gradient(180deg, #A72517 0%, #80180F 100%)' }}>
             <Home className="text-white" size={28} />
           </button>
           <button onClick={() => { setCurrentView('profile'); setTempName(profile.name); }} className={`flex flex-col items-center gap-1 ${currentView === 'profile' ? 'text-[#A72517]' : 'text-gray-300'}`}>
